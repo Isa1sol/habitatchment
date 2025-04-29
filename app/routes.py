@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 from .models import User, Habit
 from . import db
 
@@ -27,7 +28,7 @@ def register():
 
         # Hash the password
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
-        
+
         # Create new user
         new_user = User(username=username, password=hashed_password)
         db.session.add(new_user)
@@ -91,7 +92,7 @@ def add_habit():
     if request.method == 'POST':
         habit_name = request.form['habit_name']
         description = request.form.get('description', '')  # Optional description
-        
+
         if habit_name:
             new_habit = Habit(name=habit_name, description=description, user_id=current_user.id)
             db.session.add(new_habit)
@@ -102,3 +103,28 @@ def add_habit():
             flash('Habit name is required.')
 
     return render_template('add_habit.html')
+
+# ✅ New route to complete a habit
+@main.route('/complete_habit/<int:habit_id>', methods=['POST'])
+@login_required
+def complete_habit(habit_id):
+    habit = Habit.query.get_or_404(habit_id)
+
+    if habit.user_id != current_user.id:
+        flash("You are not authorized to complete this habit.")
+        return redirect(url_for('main.dashboard'))
+
+    # Update streak logic (simplified)
+    if habit.last_completed:
+        days_since = (datetime.utcnow().date() - habit.last_completed.date()).days
+        if days_since == 1:
+            habit.streak += 1
+        elif days_since > 1:
+            habit.streak = 1  # Reset if skipped days
+    else:
+        habit.streak = 1  # First completion
+
+    habit.last_completed = datetime.utcnow()
+    db.session.commit()
+    flash("Habit marked as complete!")
+    return redirect(url_for('main.dashboard'))

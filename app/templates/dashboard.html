@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} 
 
 {% block content %}
 <h2>Your Habits</h2>
@@ -26,7 +26,14 @@
                     Last Completed: Not yet completed
                 {% endif %}
             </div>
-            <a href="{{ url_for('main.complete_habit', habit_id=habit.id) }}" class="btn btn-outline-success">Mark as Done</a>
+
+            {% if not habit.completed %}
+                <form action="{{ url_for('main.complete_habit', habit_id=habit.id) }}" method="POST" style="margin-top: 10px;">
+                    <button type="submit" class="btn btn-outline-success">Mark as Done</button>
+                </form>
+            {% else %}
+                <span class="badge bg-success mt-2">✅ Completed</span>
+            {% endif %}
         </li>
     {% else %}
         <li class="list-group-item">You haven't added any habits yet.</li>
