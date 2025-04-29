@@ -1,3 +1,12 @@
+from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask_login import login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash
+from .models import User, Habit
+from . import db
+
+# Define the main blueprint
+main = Blueprint('main', __name__)
+
 @main.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
