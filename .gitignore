@@ -1,5 +1,6 @@
-__pycache__/
 *.pyc
-instance/
-.env
+__pycache__
+instance
+.webassets-cache
 *.db
+*.sqlite

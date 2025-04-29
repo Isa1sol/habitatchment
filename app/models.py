@@ -1,16 +1,14 @@
 from . import db
 from flask_login import UserMixin
-from datetime import datetime
 
-class User(db.Model, UserMixin):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), nullable=False, unique=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
-    habits = db.relationship('Habit', backref='user', lazy=True)
 
 class Habit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    streak = db.Column(db.Integer, default=0)
-    last_completed = db.Column(db.Date, default=datetime.utcnow)
+    name = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.String(300), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('habits', lazy=True))
