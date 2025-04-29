@@ -23,7 +23,7 @@ class User(UserMixin, db.Model):
 class Habit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
-    description = db.Column(db.String(300), nullable=True)  # Added the description column
+    description = db.Column(db.String(300), nullable=True)  # Ensure this is in your model
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('habits', lazy=True))
 
