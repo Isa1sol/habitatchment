@@ -70,3 +70,22 @@ def logout():
 def dashboard():
     habits = Habit.query.filter_by(user_id=current_user.id).all()
     return render_template('dashboard.html', habits=habits)
+
+# Add habit page (accessible when logged in)
+@main.route('/add_habit', methods=['GET', 'POST'])
+@login_required
+def add_habit():
+    if request.method == 'POST':
+        habit_name = request.form['habit_name']
+        description = request.form.get('description', '')  # Optional description
+        
+        if habit_name:
+            new_habit = Habit(name=habit_name, description=description, user_id=current_user.id)
+            db.session.add(new_habit)
+            db.session.commit()
+            flash('Habit added successfully!')
+            return redirect(url_for('main.dashboard'))
+        else:
+            flash('Habit name is required.')
+
+    return render_template('add_habit.html')
