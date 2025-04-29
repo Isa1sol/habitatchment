@@ -1,8 +1,5 @@
 __pycache__/
 *.pyc
-.env
-.venv/
 instance/
-*.sqlite3
+.env
 *.db
-*.log
