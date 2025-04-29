@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Your Habits</h2>
+<form method="POST">
+    <div class="form-group">
+        <label>New Habit</label>
+        <input type="text" name="habit" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-success">Add Habit</button>
+</form>
+<hr>
+<ul class="list-group">
+    {% for habit in habits %}
+        <li class="list-group-item
+	<div>
+                <strong>{{ habit.name }}</strong><br>
+                Streak: {{ habit.streak }} days<br>
+                Last Completed: {{ habit.last_completed.strftime('%A, %B %d, %Y') }}
+            </div>
+            <a href="{{ url_for('main.complete_habit', habit_id=habit.id) }}" class="btn btn-outline-success">Mark as Done</a>
+        </li>
+    {% else %}
+        <li class="list-group-item">You haven't added any habits yet.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
