@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 
 db = SQLAlchemy()
 login_manager = LoginManager()
-migrate = Migrate()
+migrate = Migrate()  # ✅ Do not bind to app yet
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -19,10 +19,11 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
-    migrate.init_app(app, db)
     login_manager.init_app(app)
     login_manager.login_view = 'main.login'
+    migrate.init_app(app, db)  # ✅ Correct place to initialize Migrate
 
+    from .models import User, Habit
     from .routes import main
     app.register_blueprint(main)
 

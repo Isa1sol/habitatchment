@@ -1,6 +1,7 @@
 from . import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import date
 
 # User model
 class User(UserMixin, db.Model):
@@ -23,7 +24,9 @@ class User(UserMixin, db.Model):
 class Habit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
-    description = db.Column(db.String(300), nullable=True)  # Ensure this is in your model
+    description = db.Column(db.String(300), nullable=True)
+    streak = db.Column(db.Integer, default=0)  # Track completion streak
+    last_completed = db.Column(db.Date, nullable=True)  # Track when habit was last completed
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('habits', lazy=True))
 
