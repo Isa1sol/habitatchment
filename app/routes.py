@@ -65,9 +65,22 @@ def logout():
     return redirect(url_for('main.home'))
 
 # Dashboard (only accessible when logged in)
-@main.route('/dashboard')
+@main.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
+    if request.method == 'POST':
+        habit_name = request.form['habit_name']
+        description = request.form.get('description', '')  # Optional description
+
+        if habit_name:
+            new_habit = Habit(name=habit_name, description=description, user_id=current_user.id)
+            db.session.add(new_habit)
+            db.session.commit()
+            flash('Habit added successfully!')
+            return redirect(url_for('main.dashboard'))
+        else:
+            flash('Habit name is required.')
+
     habits = Habit.query.filter_by(user_id=current_user.id).all()
     return render_template('dashboard.html', habits=habits)
 
